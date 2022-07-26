@@ -1,4 +1,3 @@
-from ctypes import get_last_error
 from string import ascii_letters, digits
 import uvicorn
 
@@ -118,10 +117,10 @@ def addscheme(url: str):
 
 def stripurl(url: str):
     if url.startswith("http://"):
-        url.replace("http://", "")
+        url = url.replace("http://", "")
         return url
     elif url.startswith("https://"):
-        url.replace("https://", "")
+        url = url.replace("https://", "")
         return url
     else:
         return url
@@ -136,20 +135,17 @@ def stripurl(url: str):
 async def find_Short_URL(
     longurl: str = Query(
         default=...,
-        max_length=2043,
+        max_length=256,
         description="long URL associated with short URL",
         alias="long_url",
     ),
 ):
-    check_url = checkurl(longurl)
-    if check_url is True:
-        stripped = stripurl(longurl)
-    else:
-        stripped = longurl
+    stripped = stripurl(longurl)
 
     dbmodel = dbmng.find_short_url(stripped)
     if dbmodel != None:
         model = URL.from_orm(dbmodel)
+        model.long_url = longurl
         return model
     else:
         return JSONResponse(
@@ -190,12 +186,9 @@ async def add_url(
         alias="long_url",
     ),
 ):
-    check_url = checkurl(long_url)
-    if check_url is True:
-        stripped = stripurl(long_url)
-    else:
-        stripped = long_url
+    stripped = stripurl(long_url)
     dbmodel = dbmng.get_last_entry()
+
     if dbmodel != None:
         shortUrl = await shorten(dbmodel.short_url)
         model = URL(
@@ -209,24 +202,26 @@ async def add_url(
             url = URL.from_orm(mod)
             return url
         url = URL.from_orm(x)
+        url.long_url = long_url
         return model
     else:
-        shortUrl = await shorten("0")
+        shortUrl = "0"
         model = URL(
             short_url=shortUrl,
             long_url=stripped,
             time=datetime.now().strftime("%Y-%m-%d"),
         )
-        dbmng.insert_url(model.short_url, model.long_url, model.time)
+        x = dbmng.insert_url(model.short_url, model.long_url, model.time)
         if x is None:
             mod = dbmng.find_short_url(stripped)
             url = URL.from_orm(mod)
+            url.long_url = long_url
             return url
         return model
 
 
 @app.delete(
-    "/{long_url}",
+    "/delete",
     tags=["Authenticated"],
     response_model=URL,
     responses={
@@ -234,7 +229,7 @@ async def add_url(
         401: {"401": {"description": "Unauthorized"}},
     },
 )
-async def delete(long_url: str = Path(default=..., description="long URL to delete")):
+async def delete(long_url: str = Query(default=..., description="long URL to delete")):
     check_url = checkurl(long_url)
     if check_url:
         stripped = stripurl(long_url)
@@ -248,7 +243,7 @@ async def delete(long_url: str = Path(default=..., description="long URL to dele
         return url
     else:
         return JSONResponse(
-            status=404, content={"status": "404", "message": "Not found"}
+            status_code=404, content={"status": "404", "message": "Not found"}
         )
 
 

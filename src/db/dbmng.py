@@ -22,6 +22,11 @@ class DBMng:
         Base.metadata.create_all(engine)
         self.session = Session()
 
+    @classmethod
+    def test_db(cls, engine, Session):
+        Base.metadata.create_all(engine)
+        cls.session = Session()
+
     def insert_user(self, usertype: bool, authkey: str):
         x = self.find_user(authkey)
         user = Users(usertype, authkey)
@@ -74,5 +79,5 @@ if __name__ == "__main__":
     main = DBMng()
     # main.insert_url("1", "https://www.google.com", "2020-01-01")
     #  x = main.get_short_url("1")
-    x = main.get_last_entry()
-    main.drop_url("1")
+# x = main.get_last_entry()
+# main.drop_url("1")
