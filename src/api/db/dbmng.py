@@ -1,13 +1,14 @@
+from logging import root
 import sys
 import os
 
 if __package__:
-    path_one = "c:\\Zaid\\Fun Projects -- Code\\URL_Shortener\\src\\db"
-    path = os.path.dirname(path_one)
-    if path not in sys.path:
-        sys.path.append(path)
-    if path_one not in sys.path:
-        sys.path.append(path_one)
+    parentdir = os.path.dirname(__file__)
+    rootdir = os.path.dirname(parentdir)
+    if rootdir not in sys.path:
+        sys.path.append(rootdir)
+    if parentdir not in sys.path:
+        sys.path.append(parentdir)
     from .url import URL
     from .users import Users
 else:
