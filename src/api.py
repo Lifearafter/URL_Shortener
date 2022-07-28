@@ -1,12 +1,25 @@
 from string import ascii_letters, digits
 import uvicorn
 
-from fastapi import FastAPI, Query, Path
+from sqlalchemy.orm import Session
+
+from fastapi import Depends, FastAPI, Query, Path
 from pydantic import BaseModel
 from fastapi.responses import RedirectResponse, JSONResponse
 from datetime import datetime
 
 from db import dbmng
+from db.base import engine, SessionLocal, Base
+
+Base.metadata.create_all(bind=engine)
+
+
+async def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 
 class URL(BaseModel):
@@ -70,7 +83,6 @@ responses = {
 }
 
 app = FastAPI(openapi_tags=tags_metadata)
-dbmng = dbmng.DBMng()
 
 
 async def shorten(last_char: str):
@@ -139,10 +151,11 @@ async def find_Short_URL(
         description="long URL associated with short URL",
         alias="long_url",
     ),
+    db: Session = Depends(get_db),
 ):
     stripped = stripurl(longurl)
 
-    dbmodel = dbmng.find_short_url(stripped)
+    dbmodel = dbmng.find_short_url(db, stripped)
     if dbmodel != None:
         model = URL.from_orm(dbmodel)
         model.long_url = longurl
@@ -160,9 +173,10 @@ async def find_Short_URL(
     responses={**responses},
 )
 async def redirect(
-    short_url: str = Path(default=..., description="short URL to redirect")
+    short_url: str = Path(default=..., description="short URL to redirect"),
+    db: Session = Depends(get_db),
 ):
-    dbmodel = dbmng.get_short_url(short_url)
+    dbmodel = dbmng.get_short_url(db, short_url)
     if dbmodel != None:
         model = URL.from_orm(dbmodel)
         url = addscheme(model.long_url)
@@ -185,9 +199,10 @@ async def add_url(
         description="URL to shorten",
         alias="long_url",
     ),
+    db: Session = Depends(get_db),
 ):
     stripped = stripurl(long_url)
-    dbmodel = dbmng.get_last_entry()
+    dbmodel = dbmng.get_last_entry(db)
 
     if dbmodel != None:
         shortUrl = await shorten(dbmodel.short_url)
@@ -196,9 +211,9 @@ async def add_url(
             long_url=stripped,
             time=datetime.now().strftime("%Y-%m-%d"),
         )
-        x = dbmng.insert_url(model.short_url, model.long_url, model.time)
+        x = dbmng.insert_url(db, model.short_url, model.long_url, model.time)
         if x is None:
-            mod = dbmng.find_short_url(stripped)
+            mod = dbmng.find_short_url(db, stripped)
             url = URL.from_orm(mod)
             return url
         url = URL.from_orm(x)
@@ -211,9 +226,9 @@ async def add_url(
             long_url=stripped,
             time=datetime.now().strftime("%Y-%m-%d"),
         )
-        x = dbmng.insert_url(model.short_url, model.long_url, model.time)
+        x = dbmng.insert_url(db, model.short_url, model.long_url, model.time)
         if x is None:
-            mod = dbmng.find_short_url(stripped)
+            mod = dbmng.find_short_url(db, stripped)
             url = URL.from_orm(mod)
             url.long_url = long_url
             return url
@@ -229,17 +244,20 @@ async def add_url(
         401: {"401": {"description": "Unauthorized"}},
     },
 )
-async def delete(long_url: str = Query(default=..., description="long URL to delete")):
+async def delete(
+    long_url: str = Query(default=..., description="long URL to delete"),
+    db: Session = Depends(get_db),
+):
     check_url = checkurl(long_url)
     if check_url:
         stripped = stripurl(long_url)
-        dbmodel = dbmng.find_short_url(stripped)
+        dbmodel = dbmng.find_short_url(db, stripped)
     else:
-        dbmodel = dbmng.find_short_url(long_url)
+        dbmodel = dbmng.find_short_url(db, long_url)
 
     if dbmodel != None:
         url = URL.from_orm(dbmodel)
-        dbmng.drop_url(dbmodel.short_url)
+        dbmng.drop_url(db, dbmodel.short_url)
         return url
     else:
         return JSONResponse(

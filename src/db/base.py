@@ -18,6 +18,6 @@ engine = create_engine(
     )
 )
 
-Session = sessionmaker(bind=engine)
+SessionLocal = sessionmaker(bind=engine)
 
 Base = declarative_base()

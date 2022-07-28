@@ -11,10 +11,7 @@ from os import environ
 load_dotenv()
 
 user = environ.get("DB_USER_TEST")
-password = environ.get("
-                       
-                       
-                       ")
+password = environ.get("DB_PASSWORD_TEST")
 port = environ.get("DB_PORT_TEST")
 ip = environ.get("DB_IP_TEST")
 
@@ -25,8 +22,6 @@ url = "mysql:pymysql://{user}:{password}@{ip}:{port}/testurldb".format(
 )
 engine = create_engine(url)
 Session = sessionmaker(bind=engine)
-
-DBMng.test_db(engine, Session)
 
 
 def find_short_url():
