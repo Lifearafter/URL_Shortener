@@ -1,12 +1,23 @@
+from urllib import response
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
-from ..api import app
-from ..db.dbmng import DBMng
+import sys
 
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
 from dotenv import load_dotenv
-from os import environ
+from os import environ, path
+
+if __package__:
+    parent_dir = path.dirname(__file__)
+    path_two = "c:\\Zaid\\Fun Projects -- Code\\URL_Shortener\\src\\api"
+    path = path.dirname(path_one)
+    path2 = path.dirname(path_two)
+    if path not in sys.path:
+        sys.path.append(path)
+    if path_one not in sys.path:
+        sys.path.append(path_one)
+from ..api.api import app, get_db
 
 load_dotenv()
 
@@ -17,11 +28,41 @@ ip = environ.get("DB_IP_TEST")
 
 client = TestClient(app)
 
-url = "mysql:pymysql://{user}:{password}@{ip}:{port}/testurldb".format(
-    user=user, password=password, ip=ip, port=port
+engine = create_engine(
+    "mysql:pymysql://{user}:{password}@{ip}:{port}/testurldb".format(
+        user=user, password=password, ip=ip, port=port
+    )
 )
-engine = create_engine(url)
 Session = sessionmaker(bind=engine)
+
+
+async def overrideDB():
+    db = Session()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+app.dependency_overrides[get_db] = overrideDB
+
+
+def add_url():
+    response = client.post("/add?longurl=https://google.com")
+    currtime = datetime.now.strftime("%Y-%m-%d")
+    assert response.status_code == 200
+    assert response.json == {
+        "short_url": "0",
+        "long_url": "https://google.com",
+        "time": "{timenow}".format(timenow=currtime),
+    }
+    response = client.post("/add?longurl=www.google.com")
+    assert response.status_code == 200
+    assert response.json == {
+        "short_url": "1",
+        "long_url": "www.google.com",
+        "time": "{timenow}".format(timenow=currtime),
+    }
 
 
 def find_short_url():
@@ -29,13 +70,13 @@ def find_short_url():
     assert response.status_code == 200
     assert response.json == {
         "short_url": "0",
-        "long_url": "www.google.com",
+        "long_url": "https://google.com",
         "time": "2022-07-26",
     }
-    response = client.get("/url?longurl=google.com")
+    response = client.get("/url?longurl=www.google.com")
     assert response.status_code == 200
     assert response.json == {
-        "short_url": "0",
+        "short_url": "1",
         "long_url": "www.google.com",
         "time": "2022-07-26",
     }
