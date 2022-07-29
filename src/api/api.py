@@ -8,10 +8,36 @@ from pydantic import BaseModel
 from fastapi.responses import RedirectResponse, JSONResponse
 from datetime import datetime
 
+import sys
+import os
+
+if __package__:
+    parentdir = os.path.dirname(__file__)
+    rootdir = os.path.dirname(parentdir)
+    if rootdir not in sys.path:
+        sys.path.append(rootdir)
+    if parentdir not in sys.path:
+        sys.path.append(parentdir)
+
 from db import dbmng
 from db.base import engine, SessionLocal, Base
 
+
 Base.metadata.create_all(bind=engine)
+
+tags_metadata = [
+    {
+        "name": "Non-Authenticated",
+        "description": "API endpoints that do not require authentication.",
+    },
+    {
+        "name": "Authenticated",
+        "description": "API endpoints that require authentication.",
+    },
+]
+
+
+app = FastAPI(openapi_tags=tags_metadata)
 
 
 async def get_db():
@@ -37,17 +63,6 @@ class URL(BaseModel):
         }
         orm_mode = True
 
-
-tags_metadata = [
-    {
-        "name": "Non-Authenticated",
-        "description": "API endpoints that do not require authentication.",
-    },
-    {
-        "name": "Authenticated",
-        "description": "API endpoints that require authentication.",
-    },
-]
 
 responses = {
     400: {
@@ -81,8 +96,6 @@ responses = {
         }
     },
 }
-
-app = FastAPI(openapi_tags=tags_metadata)
 
 
 async def shorten(last_char: str):
