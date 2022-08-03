@@ -119,10 +119,9 @@ def test_find_short_url():
 
 def test_redirect():
     response = client.get("/0")
-    assert response.status_code == 307
-
-
-test_redirect()
+    assert response.url == "http://google.com"
+    response = client.get("/1")
+    assert response.url == "http://www.google.com"
 
 
 def test_delete():
