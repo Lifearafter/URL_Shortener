@@ -4,3 +4,4 @@ __pycache__
 fastapitutorial.py
 .env
 URL_DB.session.sql
+.pytest_cache

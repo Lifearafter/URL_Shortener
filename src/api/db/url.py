@@ -1,12 +1,25 @@
-from base import Base
-from sqlalchemy import Column, String
+import sys
+import os
+
+if __package__:
+    parentdir = os.path.dirname(__file__)
+    rootdir = os.path.dirname(parentdir)
+    if rootdir not in sys.path:
+        sys.path.append(rootdir)
+    if parentdir not in sys.path:
+        sys.path.append(parentdir)
+    from .base import Base
+else:
+    from base import Base
+
+from sqlalchemy import Column, String, Boolean, Integer
 
 
 class URL(Base):
     __tablename__ = "urls"
 
     short_url = Column(String(256), primary_key=True, unique=True, nullable=False)
-    long_url = Column(String(256), nullable=False, unique=True)
+    long_url = Column(String(768), nullable=False, unique=True)
     time = Column(String(256), nullable=False)
 
     def __init__(self, short_url, long_url, time):

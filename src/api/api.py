@@ -3,7 +3,7 @@ import uvicorn
 
 from sqlalchemy.orm import Session
 
-from fastapi import Depends, FastAPI, Query, Path
+from fastapi import FastAPI, Depends, Query, Path
 from pydantic import BaseModel
 from fastapi.responses import RedirectResponse, JSONResponse
 from datetime import datetime
@@ -19,11 +19,11 @@ if __package__:
     if parentdir not in sys.path:
         sys.path.append(parentdir)
 
-from db import dbmng
 from db.base import engine, SessionLocal, Base
+from db.url import URL
+from db.users import Users
+from db import dbmng
 
-
-Base.metadata.create_all(bind=engine)
 
 tags_metadata = [
     {
@@ -36,6 +36,7 @@ tags_metadata = [
     },
 ]
 
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(openapi_tags=tags_metadata)
 
@@ -271,6 +272,7 @@ async def delete(
     if dbmodel != None:
         url = URL.from_orm(dbmodel)
         dbmng.drop_url(db, dbmodel.short_url)
+        url.long_url = long_url
         return url
     else:
         return JSONResponse(
