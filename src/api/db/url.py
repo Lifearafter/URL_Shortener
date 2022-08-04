@@ -9,8 +9,6 @@ if __package__:
     if parentdir not in sys.path:
         sys.path.append(parentdir)
     from .base import Base
-else:
-    from base import Base
 
 from sqlalchemy import Column, String, Boolean, Integer
 

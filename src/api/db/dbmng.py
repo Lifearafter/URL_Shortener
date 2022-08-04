@@ -10,9 +10,6 @@ if __package__:
         sys.path.append(parentdir)
     from .url import URL
     from .users import Users
-else:
-    from url import URL
-    from users import Users
 
 
 def insert_user(session, usertype: bool, authkey: str):
