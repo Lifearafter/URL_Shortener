@@ -15,9 +15,14 @@ if __package__:
 def insert_user(session, usertype: bool, authkey: str):
     x = find_user(session, authkey)
     user = Users(usertype, authkey)
-    if x != user:
+    if x is None:
         session.add(user)
         session.commit()
+        return user
+    elif x.auth_key != user.auth_key:
+        session.add(user)
+        session.commit()
+        return user
     else:
         return None
 
@@ -25,9 +30,14 @@ def insert_user(session, usertype: bool, authkey: str):
 def insert_url(session, short_url: str, long_url: str, time: str):
     x = find_short_url(session, long_url)
     url = URL(short_url, long_url, time)
-    if x != url:
+    if x is None:
         session.add(url)
         session.commit()
+        return url
+    elif x.long_url != url.long_url:
+        session.add(url)
+        session.commit()
+        return url
     else:
         return None
 
@@ -59,10 +69,3 @@ def drop_url(session, short_url: str):
         session.commit()
     else:
         return None
-
-
-if __name__ == "__main__":
-    insert_url("1", "https://www.google.com", "2020-01-01")
-    x = get_short_url("1")
-# x = main.get_last_entry()
-# main.drop_url("1")

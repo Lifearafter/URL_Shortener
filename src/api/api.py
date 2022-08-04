@@ -135,10 +135,7 @@ def checkurl(url: str) -> bool:
 
 
 def addscheme(url: str):
-    if url.startswith("http://") or url.startswith("https://"):
-        return url
-    else:
-        return "http://" + url
+    return "http://" + url
 
 
 def stripurl(url: str):
@@ -233,7 +230,7 @@ async def add_url(
             return url
         url = URL.from_orm(x)
         url.long_url = long_url
-        return model
+        return url
     else:
         shortUrl = "0"
         model = URL(
@@ -242,12 +239,9 @@ async def add_url(
             time=datetime.now().strftime("%Y-%m-%d"),
         )
         x = dbmng.insert_url(db, model.short_url, model.long_url, model.time)
-        if x is None:
-            mod = dbmng.find_short_url(db, stripped)
-            url = URL.from_orm(mod)
-            url.long_url = long_url
-            return url
-        return model
+        url = URL.from_orm(x)
+        url.long_url = long_url
+        return url
 
 
 @app.delete(
