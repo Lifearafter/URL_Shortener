@@ -229,6 +229,7 @@ async def add_url(
         if x is None:
             mod = dbmng.find_short_url(db, stripped)
             url = URL.from_orm(mod)
+            url.long_url = long_url
             return url
         url = URL.from_orm(x)
         url.long_url = long_url

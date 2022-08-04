@@ -86,11 +86,91 @@ def test_add_url():
     assert data["long_url"] == "https://google.com"
     assert data["short_url"] == "0"
     assert data["time"] == currtime
+
     response = client.post("/add?long_url=www.google.com")
     assert response.status_code == 200
     data = response.json()
     assert data["long_url"] == "www.google.com"
     assert data["short_url"] == "1"
+    assert data["time"] == currtime
+
+    response = client.post("/add?long_url=https://www.facebook.com")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["long_url"] == "https://www.facebook.com"
+    assert data["short_url"] == "2"
+    assert data["time"] == currtime
+
+    response = client.post("/add?long_url=https://stackoverflow.com")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["long_url"] == "https://stackoverflow.com"
+    assert data["short_url"] == "3"
+    assert data["time"] == currtime
+
+    response = client.post("/add?long_url=https://www.youtube.com")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["long_url"] == "https://www.youtube.com"
+    assert data["short_url"] == "4"
+    assert data["time"] == currtime
+
+    response = client.post("/add?long_url=https://www.utdallas.edu/galaxy")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["long_url"] == "https://www.utdallas.edu/galaxy"
+    assert data["short_url"] == "5"
+    assert data["time"] == currtime
+
+    response = client.post("/add?long_url=https://www.lttstore.com")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["long_url"] == "https://www.lttstore.com"
+    assert data["short_url"] == "6"
+    assert data["time"] == currtime
+
+    response = client.post("/add?long_url=https://www.amazon.com")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["long_url"] == "https://www.amazon.com"
+    assert data["short_url"] == "7"
+    assert data["time"] == currtime
+
+    response = client.post("/add?long_url=https://github.com")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["long_url"] == "https://github.com"
+    assert data["short_url"] == "8"
+    assert data["time"] == currtime
+
+    response = client.post(
+        "/add?long_url=http://lifearafter.github.io/Personal_Website"
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["long_url"] == "http://lifearafter.github.io/Personal_Website"
+    assert data["short_url"] == "9"
+    assert data["time"] == currtime
+
+    response = client.post("/add?long_url=https://resumeworded.com")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["long_url"] == "https://resumeworded.com"
+    assert data["short_url"] == "a"
+    assert data["time"] == currtime
+
+    response = client.post("/add?long_url=https://github.com/Lifearafter")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["long_url"] == "https://github.com/Lifearafter"
+    assert data["short_url"] == "b"
+    assert data["time"] == currtime
+
+    response = client.post("/add?long_url=https://github.com/Lifearafter")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["long_url"] == "https://github.com/Lifearafter"
+    assert data["short_url"] == "b"
     assert data["time"] == currtime
 
 
@@ -123,6 +203,11 @@ def test_redirect():
     response = client.get("/1")
     assert response.url == "http://www.google.com"
 
+    response = client.get("/Z")
+    data = response.json()
+    assert data["status"] == "404"
+    assert data["message"] == "Not found"
+
 
 def test_delete():
     currtime = datetime.now().strftime("%Y-%m-%d")
@@ -140,3 +225,81 @@ def test_delete():
     assert data["long_url"] == "www.google.com"
     assert data["short_url"] == "1"
     assert data["time"] == currtime
+
+    response = client.delete("/delete?long_url=https://www.facebook.com")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["long_url"] == "https://www.facebook.com"
+    assert data["short_url"] == "2"
+    assert data["time"] == currtime
+
+    response = client.delete("/delete?long_url=https://stackoverflow.com")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["long_url"] == "https://stackoverflow.com"
+    assert data["short_url"] == "3"
+    assert data["time"] == currtime
+
+    response = client.delete("/delete?long_url=https://www.youtube.com")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["long_url"] == "https://www.youtube.com"
+    assert data["short_url"] == "4"
+    assert data["time"] == currtime
+
+    response = client.delete("/delete?long_url=https://www.utdallas.edu/galaxy")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["long_url"] == "https://www.utdallas.edu/galaxy"
+    assert data["short_url"] == "5"
+    assert data["time"] == currtime
+
+    response = client.delete("/delete?long_url=https://www.lttstore.com")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["long_url"] == "https://www.lttstore.com"
+    assert data["short_url"] == "6"
+    assert data["time"] == currtime
+
+    response = client.delete("/delete?long_url=https://www.amazon.com")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["long_url"] == "https://www.amazon.com"
+    assert data["short_url"] == "7"
+    assert data["time"] == currtime
+
+    response = client.delete("/delete?long_url=https://github.com")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["long_url"] == "https://github.com"
+    assert data["short_url"] == "8"
+    assert data["time"] == currtime
+
+    response = client.delete(
+        "/delete?long_url=https://lifearafter.github.io/Personal_Website"
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["long_url"] == "https://lifearafter.github.io/Personal_Website"
+    assert data["short_url"] == "9"
+    assert data["time"] == currtime
+
+    response = client.delete("/delete?long_url=https://resumeworded.com")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["long_url"] == "https://resumeworded.com"
+    assert data["short_url"] == "a"
+    assert data["time"] == currtime
+
+    response = client.delete("/delete?long_url=https://github.com/Lifearafter")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["long_url"] == "https://github.com/Lifearafter"
+    assert data["short_url"] == "b"
+    assert data["time"] == currtime
+
+    response = client.delete("/delete?long_url=https://www.linkedin.com/in/lifearafter")
+    assert response.status_code == 404
+    data = response.json()
+    assert data["status"] == "404"
+    assert data["message"] == "Not found"
