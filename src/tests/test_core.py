@@ -22,10 +22,10 @@ from api.api import app, get_db
 
 load_dotenv()
 
-user = environ.get("DB_USER_TEST")
-password = environ.get("DB_PASSWORD_TEST")
-port = environ.get("DB_PORT_TEST")
-ip = environ.get("DB_IP_TEST")
+user = environ.get("DB_USER")
+password = environ.get("DB_PASSWORD")
+port = environ.get("DB_PORT")
+ip = environ.get("DB_IP")
 
 engine = create_engine(
     "mysql+pymysql://{user}:{password}@{ip}:{port}/testurldb".format(
