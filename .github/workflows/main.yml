@@ -53,7 +53,7 @@ jobs:
           DB_PORT: ${{ secrets.DB_PORT }}
       - name: Create archive of dependencies
         run: |
-          cd ./venv/lib/site-packages
+          cd ./.venv/lib/site-packages
           zip -r9 ../../../../api.zip .
       - name: Add API files to Zip file
         run: cd ./src/api && zip -g ../api.zip -r .
