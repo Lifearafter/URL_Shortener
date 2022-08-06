@@ -4,6 +4,7 @@ on:
   # Trigger the workflow on push
   push:
     branches: ["master"]
+    branches: ["preprocess-yml"]
 
 # The Job defines a series of steps that execute on the same runner.
 jobs:
