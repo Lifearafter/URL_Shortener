@@ -1,5 +1,6 @@
+from cgitb import handler
 from string import ascii_letters, digits
-import uvicorn
+from mangum import Mangum
 
 from sqlalchemy.orm import Session
 
@@ -275,5 +276,4 @@ async def delete(
         )
 
 
-if __name__ == "__main__":
-    uvicorn.run("api:app", host="127.0.0.1", port=8000, reload=True)
+handler = Mangum(app=app)
