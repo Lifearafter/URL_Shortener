@@ -4,7 +4,7 @@ on:
   # Trigger the workflow on push
   push:
     branches: ["preprocess-yml"]
-  pull:
+  pull_request:
     branches: ["master"]
     paths: [".github/workflows/main.yaml"]
 
