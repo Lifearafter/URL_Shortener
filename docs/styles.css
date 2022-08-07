@@ -6,16 +6,19 @@ body{
     
 }
 .center-container{
-    position:absolute;
-    width:100px;
-    height:00px;
-    left: 47.5%;
-    right: 52.5%;
-    top:40%;
-    margin-left:-50px;
-    margin-top:-50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
-.center-container h1{
+.center-container-height {
+    height: 50%;
+}
+.inputurl{
     text-align:center;
-    white-space:nowrap
+    width: 550px;
+    height: 30px;
+    font-family: inherit;
+    font-size: inherit;
+
 }
