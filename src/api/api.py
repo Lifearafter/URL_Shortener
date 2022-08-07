@@ -2,6 +2,8 @@ from cgitb import handler
 from string import ascii_letters, digits
 from mangum import Mangum
 
+# import uvicorn
+
 from sqlalchemy.orm import Session
 
 from fastapi import FastAPI, Depends, Query, Path
@@ -39,7 +41,7 @@ tags_metadata = [
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(openapi_tags=tags_metadata)
+app = FastAPI(openapi_tags=tags_metadata, root_path="/dev")
 
 
 async def get_db():
@@ -277,3 +279,5 @@ async def delete(
 
 
 handler = Mangum(app=app)
+# if __name__ == "__main__":
+#     uvicorn.run(app, host="127.0.0.1", port=8000)
