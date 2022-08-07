@@ -12,7 +12,7 @@ body{
     align-items: center;
 }
 .center-container-height {
-    height: 50%;
+    margin-top: 15%;
 }
 .inputurl{
     text-align:center;
