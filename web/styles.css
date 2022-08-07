@@ -5,11 +5,17 @@ body{
     color: white;
     
 }
-.center-coloumn{
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column, row;
-    justify-content: center;
-    align-items: center;
+.center-container{
+    position:absolute;
+    width:100px;
+    height:00px;
+    left: 47.5%;
+    right: 52.5%;
+    top:40%;
+    margin-left:-50px;
+    margin-top:-50px;
+}
+.center-container h1{
+    text-align:center;
+    white-space:nowrap
 }
