@@ -52,7 +52,7 @@ async def get_db():
 
 class URL(BaseModel):
     long_url: str
-    short_url: str | None = None  # Change when finished with db
+    short_url: str
     time: str
 
     class Config:
