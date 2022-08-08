@@ -43,7 +43,7 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(openapi_tags=tags_metadata, root_path="/dev")
 
-origins = ["http://127.0.0.1:5500/docs/"]
+origins = ["*"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
