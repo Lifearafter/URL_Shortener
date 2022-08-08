@@ -1,4 +1,3 @@
-from cgitb import handler
 from string import ascii_letters, digits
 from mangum import Mangum
 
@@ -122,12 +121,11 @@ async def shorten(last_char: str):
             for y in digit:
                 if y == last_char:
                     addedchar = digit[digit.index(y) + 1]
-                    isNextChar = True
                     break
         else:
             addedchar = "a"
     elif last_char in ascii_letters:
-        if last_char != "Z":
+        if last_char != "z":
             for x in letters:
                 if x is last_char:
                     addedchar = letters[letters.index(x) + 1]
@@ -136,7 +134,7 @@ async def shorten(last_char: str):
             addedchar = "0"
             isNextChar = True
 
-    return addedchar
+    return (addedchar, isNextChar)
 
 
 def checkurl(url: str) -> bool:
@@ -228,7 +226,11 @@ async def add_url(
     dbmodel = dbmng.get_last_entry(db)
 
     if dbmodel != None:
-        shortUrl = await shorten(dbmodel.short_url)
+        shortUrlTuple = await shorten(dbmodel.short_url)
+        if shortUrlTuple[1] == True:
+            shortUrl = dbmodel.short_url + shortUrlTuple[0]
+        else:
+            shortUrl = shortUrlTuple[0]
         model = URL(
             short_url=shortUrl,
             long_url=stripped,
