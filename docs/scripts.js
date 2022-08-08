@@ -2,14 +2,14 @@ var urltoapi = "https://nxihka4eoi.execute-api.us-east-1.amazonaws.com/dev"
 
 function inputButtonClick() {
 
-    var x = document.getElementById("inputtext").value;
+    var longurl = document.getElementById("inputtext").value;
     
-    if (x == "") {
+    if (longurl == "") {
         alert("Please enter a valid input");
     }
     else {
-        var url = urltoapi + "/url?long_url=" + x;
-        var  xhr = new XMLHttpRequest();
+        var url = urltoapi + "/url?long_url=" + longurl;
+        var xhr = new XMLHttpRequest();
         xhr.open("GET", url, true);
         xhr.onreadystatechange = function () {
             if (xhr.readyState == 4) {
@@ -19,10 +19,28 @@ function inputButtonClick() {
                     var output = json.short_url;
                     document.getElementById("inputtext").value = urltoapi+'/'+output;
                 }
+                else if (xhr.status == 404) {
+                    var req = new XMLHttpRequest();
+                    url = urltoapi + "/add?long_url=" + longurl;
+                    req.open("POST", url, true);
+                    req.onreadystatechange = function () {
+                        if (req.readyState == 4) {
+                            if (req.status == 200) {
+                                var response = req.responseText;
+                                var json = JSON.parse(response);
+                                var output = json.short_url;
+                                document.getElementById("inputtext").value = urltoapi + '/' + output;
+                            }
+                            else {
+                                alert("Error");
+                            }
+                        }
+                    }
+                    req.send();
+                }
                 else{
                     var response = JSON.parse(xhr.responseText);
                     document.getElementById("inputtext").value = response.message;
-                    
                 }
             }
         }
