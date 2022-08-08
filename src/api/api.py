@@ -2,7 +2,7 @@ from cgitb import handler
 from string import ascii_letters, digits
 from mangum import Mangum
 
-# import uvicorn
+from fastapi.middleware.cors import CORSMiddleware
 
 from sqlalchemy.orm import Session
 
@@ -27,6 +27,7 @@ from db.url import URL
 from db.users import Users
 from db import dbmng
 
+origins = ["http://127.0.0.1:5500/docs/"]
 
 tags_metadata = [
     {
@@ -42,6 +43,14 @@ tags_metadata = [
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(openapi_tags=tags_metadata, root_path="/dev")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 async def get_db():
