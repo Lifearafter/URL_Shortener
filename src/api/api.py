@@ -43,6 +43,7 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI(openapi_tags=tags_metadata, root_path="/dev")
 
 origins = ["*"]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
