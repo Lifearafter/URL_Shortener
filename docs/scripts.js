@@ -4,7 +4,7 @@ function inputButtonClick() {
 
     var longurl = document.getElementById("inputtext").value;
     
-    if (longurl == "") {
+    if (longurl == "" || isValidURL(longurl) == false) {
         alert("Please enter a valid input");
     }
     else {
@@ -47,3 +47,8 @@ function inputButtonClick() {
         xhr.send();
     }
 }
+
+function isValidURL(string) {
+    var res = string.match(/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
+    return (res !== null)
+  };

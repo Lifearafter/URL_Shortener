@@ -2,7 +2,6 @@ from string import ascii_letters, digits
 from mangum import Mangum
 
 from fastapi.middleware.cors import CORSMiddleware
-
 from sqlalchemy.orm import Session
 
 from fastapi import FastAPI, Depends, Query, Path
@@ -12,6 +11,7 @@ from datetime import datetime
 
 import sys
 import os
+import re
 
 if __package__:
     parentdir = os.path.dirname(__file__)
@@ -226,11 +226,17 @@ async def add_url(
     dbmodel = dbmng.get_last_entry(db)
 
     if dbmodel != None:
-        shortUrlTuple = await shorten(dbmodel.short_url)
+        lastchar = dbmodel.short_url[-1]
+        shortUrlTuple = await shorten(lastchar)
         if shortUrlTuple[1] == True:
             shortUrl = dbmodel.short_url + shortUrlTuple[0]
         else:
-            shortUrl = shortUrlTuple[0]
+            shortUrl = dbmodel.short_url
+            shortUrl = re.sub(
+                r".$",
+                "{shortUrlTuple}".format(shortUrlTuple=shortUrlTuple[0]),
+                shortUrl,
+            )
         model = URL(
             short_url=shortUrl,
             long_url=stripped,
