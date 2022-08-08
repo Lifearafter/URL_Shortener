@@ -27,7 +27,6 @@ from db.url import URL
 from db.users import Users
 from db import dbmng
 
-origins = ["http://127.0.0.1:5500/docs/"]
 
 tags_metadata = [
     {
@@ -44,6 +43,7 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(openapi_tags=tags_metadata, root_path="/dev")
 
+origins = ["http://127.0.0.1:5500/docs/"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
