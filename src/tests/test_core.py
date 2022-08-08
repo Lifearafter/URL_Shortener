@@ -174,9 +174,6 @@ def test_add_url():
     assert data["time"] == currtime
 
 
-test_add_url()
-
-
 def test_find_short_url():
     response = client.get("/url?long_url=https://google.com")
     currtime = datetime.now().strftime("%Y-%m-%d")
@@ -306,6 +303,3 @@ def test_delete():
     data = response.json()
     assert data["status"] == "404"
     assert data["message"] == "Not found"
-
-
-test_delete()
