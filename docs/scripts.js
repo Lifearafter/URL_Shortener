@@ -14,14 +14,15 @@ function inputButtonClick() {
         xhr.onreadystatechange = function () {
             if (xhr.readyState == 4) {
                 if(xhr.status == 200){
-                    var response = JSON.parse(xhr.responseText);
-                    document.getElementById("inputtext").value = response.message;
-                }
-                else{
                     var response = xhr.responseText;
                     var json = JSON.parse(response);
                     var output = json.short_url;
-                    document.getElementById("inputtext").value = output;
+                    document.getElementById("inputtext").value = urltoapi+'/'+output;
+                }
+                else{
+                    var response = JSON.parse(xhr.responseText);
+                    document.getElementById("inputtext").value = response.message;
+                    
                 }
             }
         }
