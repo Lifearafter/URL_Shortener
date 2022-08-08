@@ -37,3 +37,18 @@ body{
 .inputsubmit:hover{
     background-color: rgb(113,9,121);
 }
+.inputredirect{
+    margin-top: 20px;
+    border-radius: 25px;
+    width: 100px;
+    height: 30px;
+    color: white;
+    background-color: rgb(132,129,189);
+    border-color: transparent;
+    font-family: inherit;
+    cursor:pointer;
+    display: none;
+}
+.inputredirect:hover{
+    background-color: rgb(113,9,121);
+}

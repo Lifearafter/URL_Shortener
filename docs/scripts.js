@@ -1,4 +1,5 @@
 var urltoapi = "https://nxihka4eoi.execute-api.us-east-1.amazonaws.com/dev"
+var shortmainurl;
 
 function inputButtonClick() {
 
@@ -17,7 +18,9 @@ function inputButtonClick() {
                     var response = xhr.responseText;
                     var json = JSON.parse(response);
                     var output = json.short_url;
-                    document.getElementById("inputtext").value = urltoapi+'/'+output;
+                    shortmainurl = urltoapi+'/'+output;
+                    document.getElementById("inputtext").value = shortmainurl;
+                    showRedirectDiv();
                 }
                 else if (xhr.status == 404) {
                     var req = new XMLHttpRequest();
@@ -29,7 +32,9 @@ function inputButtonClick() {
                                 var response = req.responseText;
                                 var json = JSON.parse(response);
                                 var output = json.short_url;
-                                document.getElementById("inputtext").value = urltoapi + '/' + output;
+                                shortmainurl = urltoapi+'/'+output;
+                                document.getElementById("inputtext").value = shortmainurl;
+                                showRedirectDiv();
                             }
                             else {
                                 alert("Error");
@@ -46,6 +51,16 @@ function inputButtonClick() {
         }
         xhr.send();
     }
+}
+
+function inputRedirect(){
+    window.open(shortmainurl, '_blank');
+    let redirectDiv = document.getElementById("redirectDiv");
+    redirectDiv.style.display = "none";
+}
+function showRedirectDiv(){
+    let redirectDiv = document.getElementById("redirectDiv");
+    redirectDiv.style.display = "block";
 }
 
 function isValidURL(string) {
