@@ -13,7 +13,7 @@ if __package__:
 from sqlalchemy import Column, String
 
 
-class URL(Base):
+class URL_Mapping(Base):
     __tablename__ = "urls"
 
     short_url = Column(String(1024), primary_key=True,

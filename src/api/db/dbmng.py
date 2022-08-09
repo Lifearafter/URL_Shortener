@@ -8,7 +8,7 @@ if __package__:
         sys.path.append(rootdir)
     if parentdir not in sys.path:
         sys.path.append(parentdir)
-    from .url import URL
+    from .url_mapping import URL_Mapping
     from .users import Users
 
 
@@ -27,15 +27,11 @@ def insert_user(session, usertype: bool, authkey: str):
         return None
 
 
-def insert_url(session, new_url: URL):
+def insert_url(session, new_url: URL_Mapping):
+    '''Return the new URL object if inserted, otherwise return None'''
     stored_match = find_url_given_long(session, new_url.long_url)
-    # Not stored yet, insert it
+    # This longurl is not mapped yet, insert it
     if stored_match is None:
-        session.add(new_url)
-        session.commit()
-        return new_url
-    # long_url doesn't match stored long_url, update it
-    elif stored_match.long_url != new_url.long_url:
         session.add(new_url)
         session.commit()
         return new_url
@@ -43,9 +39,9 @@ def insert_url(session, new_url: URL):
     return None
 
 
-def find_url_given_long(session, longurl: str) -> URL | None:
-    '''Find the stored URL object given the original long URL (stripped of protocol) as a key'''
-    return session.query(URL).filter(URL.long_url == longurl).first()
+def find_url_given_long(session, thislongurl: str) -> URL_Mapping | None:
+    '''Find the stored URL_Mapping object given the original long URL (stripped of protocol) as a key'''
+    return session.query(URL_Mapping).filter(URL_Mapping.long_url == thislongurl).first()
 
 
 def find_user(session, authkey: str):
@@ -53,11 +49,11 @@ def find_user(session, authkey: str):
 
 
 def get_last_entry(session):
-    return session.query(URL).order_by(None).order_by(URL.short_url.desc()).first()
+    return session.query(URL_Mapping).order_by(None).order_by(URL_Mapping.short_url.desc()).first()
 
 
 def get_short_url(session, short_url: str):
-    return session.query(URL).get(short_url)
+    return session.query(URL_Mapping).get(short_url)
 
 
 def drop_url(session, short_url: str):
