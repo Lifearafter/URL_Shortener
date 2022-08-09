@@ -22,7 +22,7 @@ if __package__:
         sys.path.append(parentdir)
 
 from db.base import engine, SessionLocal, Base
-from db.url import URL
+from api.db.url_mapping import URL_Mapping
 from db.users import Users
 from db import dbmng
 
@@ -61,7 +61,7 @@ async def get_db():
         db.close()
 
 
-class URL(BaseModel):
+class URL_Mapping(BaseModel):
     long_url: str
     short_url: str
     time: str
@@ -138,11 +138,9 @@ async def shorten(last_char: str):
     return (addedchar, isNextChar)
 
 
-def checkurl(url: str) -> bool:
-    if url.startswith("http://") or url.startswith("https://"):
-        return True
-    else:
-        return False
+def is_url(url: str) -> bool:
+    regex = r'/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g'
+    return re.match(regex, url) is not None
 
 
 def addscheme(url: str):
@@ -159,10 +157,10 @@ def stripurl(url: str):
     else:
         return url
 
-
+# endpoint to get short url from long url
 @app.get(
     "/url",
-    response_model=URL,
+    response_model=URL_Mapping,
     tags=["Non-Authenticated"],
     responses={**responses},
 )
@@ -177,9 +175,9 @@ async def find_Short_URL(
 ):
     stripped = stripurl(longurl)
 
-    dbmodel = dbmng.find_short_url(db, stripped)
-    if dbmodel != None:
-        model = URL.from_orm(dbmodel)
+    dbmodel = dbmng.find_url_given_long(db, stripped)
+    if dbmodel is not None:
+        model = URL_Mapping.from_orm(dbmodel)
         model.long_url = longurl
         return model
     else:
@@ -187,7 +185,7 @@ async def find_Short_URL(
             status_code=404, content={"status": "404", "message": "Not found"}
         )
 
-
+#  endpoint to redirect to long url given a shortened url
 @app.get(
     "/{short_url}",
     response_class=RedirectResponse,
@@ -199,8 +197,8 @@ async def redirect(
     db: Session = Depends(get_db),
 ):
     dbmodel = dbmng.get_short_url(db, short_url)
-    if dbmodel != None:
-        model = URL.from_orm(dbmodel)
+    if dbmodel is not None:
+        model = URL_Mapping.from_orm(dbmodel)
         url = addscheme(model.long_url)
         return RedirectResponse(url)
     else:
@@ -208,10 +206,10 @@ async def redirect(
             status_code=404, content={"status": "404", "message": "Not found"}
         )
 
-
+# endpoint to create a shortened url given a long url
 @app.post(
     "/add",
-    response_model=URL,
+    response_model=URL_Mapping,
     tags=["Non-Authenticated"],
     responses={**responses},
 )
@@ -224,43 +222,37 @@ async def add_url(
     db: Session = Depends(get_db),
 ):
     stripped = stripurl(long_url)
-    dbmodel = dbmng.get_last_entry(db)
+    last_entry = dbmng.get_last_entry(db)
 
-    if dbmodel != None:
-        lastchar = dbmodel.short_url[-1]
-        shortUrlTuple = await shorten(lastchar)
-        if shortUrlTuple[1] == True:
-            shortUrl = dbmodel.short_url + shortUrlTuple[0]
-        else:
-            shortUrl = dbmodel.short_url
-            shortUrl = re.sub(
-                r".$",
-                "{shortUrlTuple}".format(shortUrlTuple=shortUrlTuple[0]),
-                shortUrl,
-            )
-        model = URL(
+    # if any URL is mapped in DB already
+    if last_entry is not None:
+        urlPath = hex(int(last_entry.short_url, base=16) - 1)
+        shortUrl = f"{urlPath.zfill(len(urlPath))}"
+        model = URL_Mapping(
             short_url=shortUrl,
             long_url=stripped,
             time=datetime.now().strftime("%Y-%m-%d"),
         )
-        x = dbmng.insert_url(db, model.short_url, model.long_url, model.time)
-        if x is None:
-            mod = dbmng.find_short_url(db, stripped)
-            url = URL.from_orm(mod)
+        stored_url = dbmng.insert_url(db, model)
+        if stored_url is None:
+            mod = dbmng.find_url_given_long(db, stripped)
+            url = URL_Mapping.from_orm(mod)
             url.long_url = long_url
             return url
-        url = URL.from_orm(x)
+        url = URL_Mapping.from_orm(stored_url)
         url.long_url = long_url
         return url
+    # if no URL is mapped in DB already- we need to add the first one
     else:
-        shortUrl = "0"
-        model = URL(
+        # first 1000 digits of pi
+        shortUrl = "1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679821480865132823066470938446095505822317253594081284811174502841027019385211055596446229489549303819644288109756659334461284756482337867831652712019091456485669234603486104543266482133936072602491412737245870066063155881748815209209628292540917153643678925903600113305305488204665213841469519415116094330572703657595919530921861173819326117931051185480744623799627495673518857527248912279381830119491298336733624406566430860213949463952247371907021798609437027705392171762931767523846748184676694051320005681271452635608277857713427577896091736371787214684409012249534301465495853710507922796892589235420199561121290219608640344181598136297747713099605187072113499999983729780499510597317328160963185950244594553469083026425223082533446850352619311881710100031378387528865875332083814206171776691473035982534904287554687311595628638823537875937519577818577805321712268066130019278766111959092164201989"
+        model = URL_Mapping(
             short_url=shortUrl,
             long_url=stripped,
             time=datetime.now().strftime("%Y-%m-%d"),
         )
-        x = dbmng.insert_url(db, model.short_url, model.long_url, model.time)
-        url = URL.from_orm(x)
+        stored_url = dbmng.insert_url(db, model)
+        url = URL_Mapping.from_orm(stored_url)
         url.long_url = long_url
         return url
 
@@ -268,7 +260,7 @@ async def add_url(
 @app.delete(
     "/delete",
     tags=["Authenticated"],
-    response_model=URL,
+    response_model=URL_Mapping,
     responses={
         **responses,
         401: {"401": {"description": "Unauthorized"}},
@@ -278,15 +270,15 @@ async def delete(
     long_url: str = Query(default=..., description="long URL to delete"),
     db: Session = Depends(get_db),
 ):
-    check_url = checkurl(long_url)
-    if check_url:
+    is_url = is_url(long_url)
+    if is_url:
         stripped = stripurl(long_url)
-        dbmodel = dbmng.find_short_url(db, stripped)
+        dbmodel = dbmng.find_url_given_long(db, stripped)
     else:
-        dbmodel = dbmng.find_short_url(db, long_url)
+        dbmodel = dbmng.find_url_given_long(db, long_url)
 
-    if dbmodel != None:
-        url = URL.from_orm(dbmodel)
+    if dbmodel is not None:
+        url = URL_Mapping.from_orm(dbmodel)
         dbmng.drop_url(db, dbmodel.short_url)
         url.long_url = long_url
         return url
