@@ -27,45 +27,43 @@ def insert_user(session, usertype: bool, authkey: str):
         return None
 
 
-def insert_url(session, short_url: str, long_url: str, time: str):
-    x = find_short_url(session, long_url)
-    url = URL(short_url, long_url, time)
-    if x is None:
-        session.add(url)
+def insert_url(session, new_url: URL):
+    stored_match = find_url_given_long(session, new_url.long_url)
+    # Not stored yet, insert it
+    if stored_match is None:
+        session.add(new_url)
         session.commit()
-        return url
-    elif x.long_url != url.long_url:
-        session.add(url)
+        return new_url
+    # long_url doesn't match stored long_url, update it
+    elif stored_match.long_url != new_url.long_url:
+        session.add(new_url)
         session.commit()
-        return url
-    else:
-        return None
+        return new_url
+    # a map is already stored in the db
+    return None
 
 
-def find_short_url(session, longurl: str):
-    x = session.query(URL).filter(URL.long_url == longurl).first()
-    return x
+def find_url_given_long(session, longurl: str) -> URL | None:
+    '''Find the stored URL object given the original long URL (stripped of protocol) as a key'''
+    return session.query(URL).filter(URL.long_url == longurl).first()
 
 
 def find_user(session, authkey: str):
-    x = session.query(Users).filter(Users.auth_key == authkey).first()
-    return x
+    return session.query(Users).filter(Users.auth_key == authkey).first()
 
 
 def get_last_entry(session):
-    x = session.query(URL).order_by(None).order_by(URL.short_url.desc()).first()
-    return x
+    return session.query(URL).order_by(None).order_by(URL.short_url.desc()).first()
 
 
 def get_short_url(session, short_url: str):
-    x = session.query(URL).get(short_url)
-    return x
+    return session.query(URL).get(short_url)
 
 
 def drop_url(session, short_url: str):
-    x = get_short_url(session, short_url)
-    if x is not None:
-        session.delete(x)
+    stored_short_url = get_short_url(session, short_url)
+    if stored_short_url is not None:
+        session.delete(stored_short_url)
         session.commit()
     else:
         return None
