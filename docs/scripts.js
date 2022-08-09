@@ -9,7 +9,7 @@ function inputButtonClick() {
         alert("Please enter a valid input");
     }
     else {
-        const xhr_request_url = API_URL + "/url?shorturl=" + shorturl;
+        const xhr_request_url = API_URL + "/url?long_url=" + shorturl;
         const xhr = new XMLHttpRequest();
         xhr.open("GET", xhr_request_url, true);
         xhr.onreadystatechange = function () {
