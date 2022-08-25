@@ -26,6 +26,7 @@ body{
     height: 30px;
     font-family: inherit;
     font-size: inherit;
+    /* margin-left: 5vh; */
 
 }
 .inputsubmit{
@@ -73,6 +74,7 @@ body{
     height: 35px;
     color: white;
     background-color: #6B6B6B;
+    background:url("icons/copy_icon.png");
     border-color: transparent;
     font-family: inherit;
     cursor:pointer;

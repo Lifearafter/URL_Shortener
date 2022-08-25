@@ -1,6 +1,13 @@
 const URL_TO_API = "https://nxihka4eoi.execute-api.us-east-1.amazonaws.com/dev"
 var shortURL;
 
+var inputURL = document.getElementById("inputtext");
+inputURL.addEventListener("keypress", function(event){
+    if(event.key == "Enter"){
+        inputButtonClick()
+    }
+});
+
 function inputButtonClick() {
 
     let longURL = document.getElementById("inputtext").value;
@@ -20,6 +27,10 @@ function inputButtonClick() {
                     let formattedOut = jsonOut.short_url;
                     shortURL = URL_TO_API+'/'+formattedOut;
                     document.getElementById("inputtext").value = shortURL;
+
+                    let inputURL = document.getElementById("inputtext");
+                    inputURL.style.marginLeft= "14.5vh";
+
                     showRedirectDiv();
                     showCopyButton();
                 }
@@ -90,4 +101,7 @@ function copyClear(){
 
     let redirectDiv = document.getElementById('redirectDiv')
     redirectDiv.style.display = "none";
+
+    let inputURL = document.getElementById("inputtext");
+    inputURL.style.marginLeft= "0vh";
 }
