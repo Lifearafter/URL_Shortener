@@ -94,7 +94,7 @@ function isNotAPIredirect(string){
 
 function copyClear(){
     let urlInputBar = document.getElementById('inputtext')
-    navigator.clipboard.writeText(urlInputBar.value);
+    navigator.clipboard.writeText(shortURL);
     urlInputBar.value = '';
 
     let copyButton = document.getElementById('copybutton')
