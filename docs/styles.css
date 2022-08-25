@@ -1,13 +1,17 @@
+@font-face {
+    font-family: 'quint-uppercase-font';
+    src: url('fonts/quint-uppercase-font/quint-uppercase-font.woff') format('woff');
+}
+
 body{
-    background: rgb(132,129,189);
-    background: linear-gradient(90deg, rgba(132,129,189,1) 0%, rgba(0,212,255,1) 0%, rgba(113,9,121,1) 76%);
-    font-family: Monaco, Monospace;
+    background: #28282B;
+    /* background: linear-gradient(90deg, rgba(132,129,189,1) 0%, rgba(0,212,255,1) 0%, rgba(113,9,121,1) 76%); */
+    font-family: quint-uppercase-font;
     color: white;
     
 }
 .center-container{
     display: flex;
-    /* flex-direction: row; */
     justify-content: center;
     align-items: center;
 }
@@ -31,13 +35,13 @@ body{
     width: 100px;
     height: 35px;
     color: white;
-    background-color: rgb(132,129,189);
+    background-color: #6B6B6B;
     border-color: transparent;
     font-family: inherit;
     cursor:pointer;
 }
 .inputsubmit:hover{
-    background-color: rgb(113,9,121);
+    background-color: #A2A2A2;
 }
 .inputredirect{
     margin-top: 20px;
@@ -45,12 +49,35 @@ body{
     width: 100px;
     height: 35px;
     color: white;
-    background-color: rgb(132,129,189);
+    background-color: #6B6B6B;
     border-color: transparent;
     font-family: inherit;
     cursor:pointer;
     display: none;
 }
 .inputredirect:hover{
-    background-color: rgb(113,9,121);
+    background-color: #A2A2A2;
+}
+.center-container-right{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 50%;
+    margin-top: -5.25%;
+}
+.copybutton{
+    display: block;
+    margin-left: 20px;
+    border-radius: 25px;
+    width: 100px;
+    height: 35px;
+    color: white;
+    background-color: #6B6B6B;
+    border-color: transparent;
+    font-family: inherit;
+    cursor:pointer;
+    display: none;
+}
+.copybutton:hover{
+    background-color: #A2A2A2
 }

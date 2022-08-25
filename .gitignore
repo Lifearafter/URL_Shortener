@@ -7,3 +7,4 @@ URL_DB.session.sql
 .pytest_cache
 .coverage
 htmlcov
+quint-uppercase-font.otf
