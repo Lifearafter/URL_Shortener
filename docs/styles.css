@@ -70,7 +70,7 @@ body{
     display: block;
     margin-left: 20px;
     border-radius: 25px;
-    width: 100px;
+    width: 50px;
     height: 35px;
     color: white;
     background-color: #6B6B6B;
@@ -82,4 +82,8 @@ body{
 }
 .copybutton:hover{
     background-color: #A2A2A2
+}
+.outlinesize{
+    height : 20px;
+    width : 20px;
 }

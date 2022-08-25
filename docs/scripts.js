@@ -29,7 +29,7 @@ function inputButtonClick() {
                     document.getElementById("inputtext").value = shortURL;
 
                     let inputURL = document.getElementById("inputtext");
-                    inputURL.style.marginLeft= "14.5vh";
+                    inputURL.style.marginLeft= "8.6vh";
 
                     showRedirectDiv();
                     showCopyButton();
@@ -46,6 +46,7 @@ function inputButtonClick() {
                                 let formattedOut = json.short_url;
                                 shortURL = URL_TO_API+'/'+formattedOut;
                                 document.getElementById("inputtext").value = shortURL;
+
                                 showRedirectDiv();
                                 showCopyButton();
                             }
