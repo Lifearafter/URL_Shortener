@@ -21,5 +21,5 @@ class DelStack(Base):
         Integer, primary_key=True, nullable=False, unique=True, autoincrement=True
     )
 
-    def __init__(self, shortUrl, id):
+    def __init__(self, shortUrl):
         self.short_url = shortUrl
