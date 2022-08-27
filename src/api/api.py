@@ -12,6 +12,7 @@ from datetime import datetime
 import sys
 import os
 import re
+from api.db.dbmng import pushDelStack
 
 if __package__:
     parentdir = os.path.dirname(__file__)
@@ -281,19 +282,19 @@ async def delete(
     check_url = checkurl(long_url)
     if check_url:
         stripped = stripurl(long_url)
-        dbmodel = dbmng.find_short_url(db, stripped)
     else:
-        dbmodel = dbmng.find_short_url(db, long_url)
+        stripped = long_url
 
-    if dbmodel != None:
-        url = URL.from_orm(dbmodel)
-        dbmng.drop_url(db, dbmodel.short_url)
-        url.long_url = long_url
-        return url
-    else:
+    droppedObject = dbmng.drop_url(db, stripped)
+
+    if droppedObject is None:
         return JSONResponse(
             status_code=404, content={"status": "404", "message": "Not found"}
         )
+
+    pushDelStack(db, droppedObject.short_url)
+
+    return long_url
 
 
 handler = Mangum(app=app)

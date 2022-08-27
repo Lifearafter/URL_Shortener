@@ -10,6 +10,7 @@ if __package__:
         sys.path.append(parentdir)
     from .url import URL
     from .users import Users
+    from .delStack import DelStack
 
 
 def insert_user(session, usertype: bool, authkey: str):
@@ -62,10 +63,31 @@ def get_short_url(session, short_url: str):
     return x
 
 
-def drop_url(session, short_url: str):
-    x = get_short_url(session, short_url)
-    if x is not None:
-        session.delete(x)
+def drop_url(session, long_url: str):
+    droppedObject = find_short_url(session, long_url)
+    if droppedObject is not None:
+        session.delete(droppedObject)
         session.commit()
+        return droppedObject
+    else:
+        return None
+
+
+def popDelStack(session):
+    topElement = session.query(DelStack).first()
+    if topElement is not None:
+        return topElement
+    else:
+        return None
+
+
+def pushDelStack(session, shortUrl):
+
+    confObj = get_short_url(shortUrl)
+
+    if confObj is None:
+        session.add(shortUrl)
+        session.commit()
+        return shortUrl
     else:
         return None
