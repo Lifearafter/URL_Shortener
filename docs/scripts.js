@@ -9,7 +9,7 @@ inputURL.addEventListener("keypress", (event) => {
 });
 
 let urlCard = document.getElementById("card");
-urlCard.addEventListener("click", () => {
+urlCard.addEventListener("click", ()=>{
     navigator.clipboard.writeText(shortURL);
     urlInputBar.value = '';
 });
