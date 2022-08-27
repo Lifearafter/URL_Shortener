@@ -1,11 +1,17 @@
 const URL_TO_API = "https://nxihka4eoi.execute-api.us-east-1.amazonaws.com/dev"
 var shortURL;
 
-var inputURL = document.getElementById("inputtext");
-inputURL.addEventListener("keypress", function(event){
+let inputURL = document.getElementById("inputtext");
+inputURL.addEventListener("keypress", (event) => {
     if(event.key == "Enter"){
         inputButtonClick()
     }
+});
+
+let urlCard = document.getElementById("card");
+urlCard.addEventListener("click", () => {
+    navigator.clipboard.writeText(shortURL);
+    urlInputBar.value = '';
 });
 
 function inputButtonClick() {
@@ -33,6 +39,7 @@ function inputButtonClick() {
 
                     showRedirectDiv();
                     showCopyButton();
+                    showShortUrl();
                 }
                 else if (mainReq.status == 404) {
                     let alternateReq = new XMLHttpRequest();
@@ -49,6 +56,7 @@ function inputButtonClick() {
 
                                 showRedirectDiv();
                                 showCopyButton();
+                                showShortUrl();
                             }
                             else {
                                 alert("Error");
@@ -105,4 +113,22 @@ function copyClear(){
 
     let inputURL = document.getElementById("inputtext");
     inputURL.style.marginLeft= "0vh";
+}
+
+function showShortUrl(){
+    let eleUrl = document.getElementById("card");
+    eleUrl.style.display = "block";
+
+    let eleName = document.getElementById("headingcard");
+    eleName.style.display = "block";
+
+    let eleDate = document.getElementById("datecard");
+    eleDate.style.display = "block";
+
+    var currentDate = new Date();
+
+    eleName.innerHTML = 'Short URL';
+    eleUrl.innerHTML = shortURL;
+    eleDate.innerHTML = (currentDate.getMonth() + 1) + "/" + currentDate.getDate() + "/" + currentDate.getFullYear();
+    
 }
