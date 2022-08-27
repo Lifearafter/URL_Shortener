@@ -294,7 +294,8 @@ async def delete(
 
     pushDelStack(db, droppedObject.short_url)
 
-    return long_url
+    droppedObject.long_url = long_url
+    return droppedObject
 
 
 handler = Mangum(app=app)
