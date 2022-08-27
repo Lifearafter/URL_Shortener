@@ -83,7 +83,7 @@ def popDelStack(session):
 
 def pushDelStack(session, shortUrl):
 
-    confObj = get_short_url(shortUrl)
+    confObj = get_short_url(session, shortUrl)
 
     if confObj is None:
         session.add(shortUrl)
