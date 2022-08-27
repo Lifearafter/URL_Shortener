@@ -1,3 +1,4 @@
+from ast import Del
 import sys
 import os
 
@@ -84,9 +85,10 @@ def popDelStack(session):
 def pushDelStack(session, shortUrl):
 
     confObj = get_short_url(session, shortUrl)
+    rowDelStack = DelStack(shortUrl)
 
     if confObj is None:
-        session.add(shortUrl)
+        session.add(rowDelStack)
         session.commit()
         return shortUrl
     else:

@@ -23,4 +23,3 @@ class DelStack(Base):
 
     def __init__(self, shortUrl, id):
         self.short_url = shortUrl
-        self.id = id
