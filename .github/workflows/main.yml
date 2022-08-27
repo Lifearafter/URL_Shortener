@@ -4,7 +4,7 @@ on:
   # Trigger the workflow on push
   push:
     branches: ["master"]
-    paths: ["src/**", "docs/**"]
+    paths: ["src/**"]
   pull_request:
     branches: ["master"]
     paths: [".github/workflows/main.yaml"]
