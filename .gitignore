@@ -1,0 +1,10 @@
+.venv
+__pycache__
+.vscode
+fastapitutorial.py
+.env
+URL_DB.session.sql
+.pytest_cache
+.coverage
+htmlcov
+quint-uppercase-font.otf
