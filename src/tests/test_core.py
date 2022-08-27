@@ -62,6 +62,18 @@ class Users(Base):
         self.auth_key = auth_key
 
 
+class DelStack(Base):
+    __tablename__ = "delStack"
+    short_url = Column(String(256), unique=True, nullable=False)
+    id = Column(
+        Integer, primary_key=True, nullable=False, unique=True, autoincrement=True
+    )
+
+    def __init__(self, shortUrl, id):
+        self.short_url = shortUrl
+        self.id = id
+
+
 Base.metadata.create_all(bind=engine)
 
 
