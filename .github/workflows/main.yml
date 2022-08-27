@@ -3,7 +3,8 @@ name: FastAPI CI/CD
 on:
   # Trigger the workflow on push
   push:
-    branches: ["preprocess-yml", "master"]
+    branches: ["master"]
+    paths: ["src/**", "docs/**"]
   pull_request:
     branches: ["master"]
     paths: [".github/workflows/main.yaml"]
