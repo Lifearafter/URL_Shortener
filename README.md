@@ -82,8 +82,7 @@ Used the **AWS API Gateway** to map requests to my API to the Lambda Function.<b
 
 - Upgrade the Database so that on every use, if a shortened URL is not associated with a account/User than it is to be terminated (Deleted) after 5 days of no use.<br/>
 - Add admin priveledges to delete users and accounts. <br/>
-
-* Add ability to look previous shortened urls even without an account. <br/>
-* Add ability to increase usage time of a shortened URL by a User.
-* Migrate API and Website to personal domain.
-* Add a Dockerfile for those who would like to replicated the URL-Shortener.
+- Add ability to look previous shortened urls even without an account. <br/>
+- Add ability to increase usage time of a shortened URL by a User.
+- Migrate API and Website to personal domain.
+- Add a Dockerfile for those who would like to replicated the URL-Shortener.
