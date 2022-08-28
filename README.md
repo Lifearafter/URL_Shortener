@@ -23,8 +23,6 @@
 
 <p style="font-size:17px">A <i>full-stack</i> project to implement a URL Shortener, using <b>FASTAPI</b> and <b>SQL Alchemy</b>. The Projects main purpose was to demonstrate the workings of a <i>Restful API</i>, and how it interacts with a <i>Relational Database</i> (MySQL). The website was a attempt at learning the workings of the <b>JavaScript DOM</b> and <b>CSS Styling</b>. The project is hosted on <b>AWS</b>, with a CI/CD pipeline from the github repository to AWS Services using <b>Github Actions</b>.</p>
 
-<br/>
-
 <hr>
 
 <br/>
@@ -98,7 +96,7 @@ Mapped to it by using the **SQL Alchemy** Library in python using the **PymySQl*
 Used Github Actions, to Continuously Integrate and Deploy to my **AWS Lambda Function**. <br/>
 The Database is a **AWS RDS** instance. </br>
 Used the **AWS API Gateway** to map requests to my API to the Lambda Function.<br/>
-**Unit Test** Coverage is at **92%**, some cases are untestable in normal circumstances. <br/> <br/>
+**Unit Test** Coverage is at **92%**, some cases are untestable in normal circumstances.
 
 <hr>
 <br/>
@@ -112,8 +110,6 @@ You can visit my website for the URL Shortener, to test out its current function
 **https://lifearafter.github.io/URL_Shortener**
 
 > The website domain will change in the future, and the ReadMe will reflect these changes.
-
-<br/>
 
 <hr>
 
