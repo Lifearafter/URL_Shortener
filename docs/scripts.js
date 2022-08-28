@@ -1,6 +1,11 @@
 const URL_TO_API = "https://nxihka4eoi.execute-api.us-east-1.amazonaws.com/dev"
 var shortURL;
 
+let apiColdCall = URL_TO_API + "/url?long_url=" + "google.com";
+let coldReq = new XMLHttpRequest();
+coldReq.open("GET", apiColdCall, true);
+coldReq.send();
+
 let inputURL = document.getElementById("inputtext");
 inputURL.addEventListener("keypress", (event) => {
     if(event.key == "Enter"){
@@ -16,7 +21,14 @@ urlCard.addEventListener("click", ()=>{
 
 function inputButtonClick() {
 
-    let longURL = document.getElementById("inputtext").value;
+    console.debug;
+
+    let urlEle = document.getElementById("inputtext");
+    longURL = urlEle.value;
+    // urlEle.style.display = "none";
+
+    // let waveEle = document.getElementById("wave");
+    // waveEle.style.display = "block";
     
     if (longURL == "" || isValidURL(longURL) == false || isNotAPIredirect(longURL) == true) {
         alert("Please enter a valid input");
@@ -32,10 +44,12 @@ function inputButtonClick() {
                     let jsonOut = JSON.parse(response);
                     let formattedOut = jsonOut.short_url;
                     shortURL = URL_TO_API+'/'+formattedOut;
-                    document.getElementById("inputtext").value = shortURL;
 
-                    let inputURL = document.getElementById("inputtext");
-                    inputURL.style.marginLeft= "8.6vh";
+                    // urlEle.style.display = "block";
+                    // waveEle.style.display = "none";
+                    
+                    urlEle.value = shortURL;
+                    urlEle.style.marginLeft= "8.6vh";
 
                     showRedirectDiv();
                     showCopyButton();
@@ -48,12 +62,17 @@ function inputButtonClick() {
                     alternateReq.onreadystatechange = function () {
                         if (alternateReq.readyState == 4) {
                             if (alternateReq.status == 200) {
-                                let response = alternateReq.responseText;
-                                let json = JSON.parse(response);
-                                let formattedOut = json.short_url;
+                                let response = mainReq.responseText;
+                                let jsonOut = JSON.parse(response);
+                                let formattedOut = jsonOut.short_url;
                                 shortURL = URL_TO_API+'/'+formattedOut;
-                                document.getElementById("inputtext").value = shortURL;
-
+            
+                                // urlEle.style.display = "block";
+                                // waveEle.style.display = "none";
+                                
+                                urlEle.value = shortURL;
+                                urlEle.style.marginLeft= "8.6vh";
+            
                                 showRedirectDiv();
                                 showCopyButton();
                                 showShortUrl();
