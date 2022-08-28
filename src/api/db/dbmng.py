@@ -21,10 +21,10 @@ def insert_user(session, usertype: bool, authkey: str):
         session.add(user)
         session.commit()
         return user
-    elif x.auth_key != user.auth_key:
-        session.add(user)
-        session.commit()
-        return user
+    # elif x.auth_key != user.auth_key:
+    #     session.add(user)
+    #     session.commit()
+    #     return user
     else:
         return None
 
@@ -36,10 +36,10 @@ def insert_url(session, short_url: str, long_url: str, time: str):
         session.add(url)
         session.commit()
         return url
-    elif x.long_url != url.long_url:
-        session.add(url)
-        session.commit()
-        return url
+    # elif x.long_url != url.long_url:
+    #     session.add(url)
+    #     session.commit()
+    #     return url
     else:
         return None
 
@@ -77,6 +77,8 @@ def drop_url(session, long_url: str):
 def popDelStack(session):
     topElement = session.query(DelStack).first()
     if topElement is not None:
+        session.delete(topElement)
+        session.commit()
         return topElement
     else:
         return None
@@ -84,12 +86,8 @@ def popDelStack(session):
 
 def pushDelStack(session, shortUrl):
 
-    confObj = get_short_url(session, shortUrl)
     rowDelStack = DelStack(shortUrl)
 
-    if confObj is None:
-        session.add(rowDelStack)
-        session.commit()
-        return shortUrl
-    else:
-        return None
+    session.add(rowDelStack)
+    session.commit()
+    return shortUrl

@@ -12,7 +12,6 @@ from datetime import datetime
 import sys
 import os
 import re
-from api.db.dbmng import pushDelStack
 
 if __package__:
     parentdir = os.path.dirname(__file__)
@@ -292,7 +291,7 @@ async def delete(
             status_code=404, content={"status": "404", "message": "Not found"}
         )
 
-    pushDelStack(db, droppedObject.short_url)
+    dbmng.pushDelStack(db, droppedObject.short_url)
 
     droppedObject.long_url = long_url
     return droppedObject

@@ -1,9 +1,10 @@
 from fastapi.testclient import TestClient
+from fastapi import Depends
 
 from sqlalchemy import create_engine, Column, String, Integer, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 
 from datetime import datetime
 
@@ -19,6 +20,7 @@ if parent_dir not in sys.path:
 if root_dir not in sys.path:
     sys.path.append(root_dir)
 from api.api import app, get_db
+from api.db.dbmng import popDelStack
 
 load_dotenv()
 
@@ -315,3 +317,32 @@ def test_delete():
     data = response.json()
     assert data["status"] == "404"
     assert data["message"] == "Not found"
+
+    db = Session()
+    tempRes = popDelStack(db)
+    assert tempRes.short_url == "0"
+    tempRes = popDelStack(db)
+    assert tempRes.short_url == "1"
+    tempRes = popDelStack(db)
+    assert tempRes.short_url == "2"
+    tempRes = popDelStack(db)
+    assert tempRes.short_url == "3"
+    tempRes = popDelStack(db)
+    assert tempRes.short_url == "4"
+    tempRes = popDelStack(db)
+    assert tempRes.short_url == "5"
+    tempRes = popDelStack(db)
+    assert tempRes.short_url == "6"
+    tempRes = popDelStack(db)
+    assert tempRes.short_url == "7"
+    tempRes = popDelStack(db)
+    assert tempRes.short_url == "8"
+    tempRes = popDelStack(db)
+    assert tempRes.short_url == "9"
+    tempRes = popDelStack(db)
+    assert tempRes.short_url == "a"
+    tempRes = popDelStack(db)
+    assert tempRes.short_url == "b"
+
+    tempRes = popDelStack(db)
+    assert tempRes is None
