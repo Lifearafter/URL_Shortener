@@ -1,4 +1,33 @@
+<div align="center">
+  <a href="https://github.com/Lifearafter/URL_Shortener">
+    <img src="docs/icons/page_icon.png" alt="Logo" width="400" height="186">
+  </a>
+
+  <h3 align="center">Minimalistic URL-Shortener</h3>
+
+  <p align="center">
+    A URL-Shortener without the extra BS
+    <br />
+    <a href="https://lifearafter.github.io/URL_Shortener"><strong>Website »</strong></a>
+    <br />
+    <br />
+    <a href="https://nxihka4eoi.execute-api.us-east-1.amazonaws.com/dev/docs">API Docs</a>
+    ·
+    <a href="https://github.com/Lifearafter/URL_Shortener/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/Lifearafter/URL_Shortener/issues">Request Feature</a>
+  </p>
+</div>
+
 # URL Shortener - API and Website
+
+<p style="font-size:17px">A <i>full-stack</i> project to implement a URL Shortener, using <b>FASTAPI</b> and <b>SQL Alchemy</b>. The Projects main purpose was to demonstrate the workings of a <i>Restful API</i>, and how it interacts with a <i>Relational Database</i> (MySQL). The website was a attempt at learning the workings of the <b>JavaScript DOM</b> and <b>CSS Styling</b>. The project is hosted on <b>AWS</b>, with a CI/CD pipeline from the github repository to AWS Services using <b>Github Actions</b>.</p>
+
+<br/>
+
+<hr>
+
+<br/>
 
 ## **API**
 
@@ -64,21 +93,33 @@ If all have been exhausted the algorithm starts at another bit to the last addit
 Used a **MySQL** Database to hold all the tables for this app. <br/>
 Mapped to it by using the **SQL Alchemy** Library in python using the **PymySQl** DBAPI for the purposes of connecting my mapped operations. <br/>
 
-### **Website**
+### **Hosting and CI/CD**
+
+Used Github Actions, to Continuously Integrate and Deploy to my **AWS Lambda Function**. <br/>
+The Database is a **AWS RDS** instance. </br>
+Used the **AWS API Gateway** to map requests to my API to the Lambda Function.<br/>
+**Unit Test** Coverage is at **92%**, some cases are untestable in normal circumstances. <br/> <br/>
+
+<hr>
+<br/>
+
+## **Website**
+
+Written using Javascript, HTML, and CSS. No Frameworks or external Libraries. <br/>
+A simple manipulation of the DOM to display elements when needed after calls made to API.<br/>
 
 You can visit my website for the URL Shortener, to test out its current functionality. <br/>
 **https://lifearafter.github.io/URL_Shortener**
 
 > The website domain will change in the future, and the ReadMe will reflect these changes.
 
-### **Hosting and CI/CD**
+<br/>
 
-Used Github Actions, to Continuously Integrate and Deploy to my **AWS Lambda Function**. <br/>
-The Database is a **AWS RDS** instance. </br>
-Used the **AWS API Gateway** to map requests to my API to the Lambda Function.<br/>
-**Unit Test** Coverage is at **92%**, some cases are untestable in normal circumstances.
+<hr>
 
-### **Future Plans**
+<br/>
+
+## **Future Plans**
 
 - Upgrade the Database so that on every use, if a shortened URL is not associated with a account/User than it is to be terminated (Deleted) after 5 days of no use.<br/>
 - Add admin priveledges to delete users and accounts. <br/>
