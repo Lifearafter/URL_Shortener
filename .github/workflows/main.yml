@@ -7,7 +7,7 @@ on:
     paths: ["src/**"]
   pull_request:
     branches: ["master"]
-    paths: [".github/workflows/main.yaml"]
+    paths: [".github/workflows/main.yaml", "src/**"]
 
 # The Job defines a series of steps that execute on the same runner.
 jobs:
