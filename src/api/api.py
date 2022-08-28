@@ -1,4 +1,5 @@
 from string import ascii_letters, digits
+from xmlrpc.server import DocXMLRPCRequestHandler
 from mangum import Mangum
 
 from fastapi.middleware.cors import CORSMiddleware
@@ -228,16 +229,22 @@ async def add_url(
 
     if dbmodel != None:
         lastchar = dbmodel.short_url[-1]
-        shortUrlTuple = await shorten(lastchar)
-        if shortUrlTuple[1] == True:
-            shortUrl = dbmodel.short_url + shortUrlTuple[0]
+        delShortUrl = dbmng.popDelStack(db)
+
+        if delShortUrl is None:
+            shortUrlTuple = await shorten(lastchar)
+            if shortUrlTuple[1] == True:
+                shortUrl = dbmodel.short_url + shortUrlTuple[0]
+            else:
+                shortUrl = dbmodel.short_url
+                shortUrl = re.sub(
+                    r".$",
+                    "{shortUrlTuple}".format(shortUrlTuple=shortUrlTuple[0]),
+                    shortUrl,
+                )
         else:
-            shortUrl = dbmodel.short_url
-            shortUrl = re.sub(
-                r".$",
-                "{shortUrlTuple}".format(shortUrlTuple=shortUrlTuple[0]),
-                shortUrl,
-            )
+            shortUrl = delShortUrl.short_url
+
         model = URL(
             short_url=shortUrl,
             long_url=stripped,
