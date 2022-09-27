@@ -1,4 +1,4 @@
-const URL_TO_API = "https://nxihka4eoi.execute-api.us-east-1.amazonaws.com/dev"
+const URL_TO_API = "https://nxihka4eoi.execute-api.us-east-1.amazonaws.com/dev";
 var shortURL;
 
 let apiColdCall = URL_TO_API + "/url?long_url=" + "google.com";
@@ -8,146 +8,111 @@ coldReq.send();
 
 let inputURL = document.getElementById("inputtext");
 inputURL.addEventListener("keypress", (event) => {
-    if(event.key == "Enter"){
-        inputButtonClick()
-    }
+  if (event.key == "Enter") {
+    inputButtonClick();
+  }
 });
 
 let urlCard = document.getElementById("card");
-urlCard.addEventListener("click", ()=>{
-    navigator.clipboard.writeText(shortURL);
-    urlInputBar.value = '';
+urlCard.addEventListener("click", () => {
+  navigator.clipboard.writeText(shortURL);
+  urlInputBar.value = "";
 });
 
 function inputButtonClick() {
+  let urlEle = document.getElementById("inputtext");
+  longURL = urlEle.value;
 
-    console.debug;
+  if (
+    longURL == "" ||
+    isValidURL(longURL) == false ||
+    isNotAPIredirect(longURL) == true
+  ) {
+    alert("Please enter a valid input");
+  } else {
+    let apiCall = URL_TO_API + "/add?long_url=" + longURL;
+    let mainReq = new XMLHttpRequest();
+    mainReq.onreadystatechange = () => {
+      if (mainReq.readyState == 4 && mainReq.status == 200) {
+        let response = mainReq.responseText;
+        let jsonOut = JSON.parse(response);
+        let formattedOut = jsonOut.short_url;
+        shortURL = URL_TO_API + "/" + formattedOut;
 
-    let urlEle = document.getElementById("inputtext");
-    longURL = urlEle.value;
-    // urlEle.style.display = "none";
+        urlEle.value = shortURL;
+        urlEle.style.marginLeft = "8.6vh";
 
-    // let waveEle = document.getElementById("wave");
-    // waveEle.style.display = "block";
-    
-    if (longURL == "" || isValidURL(longURL) == false || isNotAPIredirect(longURL) == true) {
-        alert("Please enter a valid input");
-    }
-    else {
-        let apiCall = URL_TO_API + "/url?long_url=" + longURL;
-        let mainReq = new XMLHttpRequest();
-        mainReq.open("GET", apiCall, true);
-        mainReq.onreadystatechange = function () {
-            if (mainReq.readyState == 4) {
-                if(mainReq.status == 200){
-                    let response = mainReq.responseText;
-                    let jsonOut = JSON.parse(response);
-                    let formattedOut = jsonOut.short_url;
-                    shortURL = URL_TO_API+'/'+formattedOut;
-
-                    // urlEle.style.display = "block";
-                    // waveEle.style.display = "none";
-                    
-                    urlEle.value = shortURL;
-                    urlEle.style.marginLeft= "8.6vh";
-
-                    showRedirectDiv();
-                    showCopyButton();
-                    showShortUrl();
-                }
-                else if (mainReq.status == 404) {
-                    let alternateReq = new XMLHttpRequest();
-                    apiCall = URL_TO_API + "/add?long_url=" + longURL;
-                    alternateReq.open("POST", apiCall, true);
-                    alternateReq.onreadystatechange = function () {
-                        if (alternateReq.readyState == 4) {
-                            if (alternateReq.status == 200) {
-                                let response = mainReq.responseText;
-                                let jsonOut = JSON.parse(response);
-                                let formattedOut = jsonOut.short_url;
-                                shortURL = URL_TO_API+'/'+formattedOut;
-            
-                                // urlEle.style.display = "block";
-                                // waveEle.style.display = "none";
-                                
-                                urlEle.value = shortURL;
-                                urlEle.style.marginLeft= "8.6vh";
-            
-                                showRedirectDiv();
-                                showCopyButton();
-                                showShortUrl();
-                            }
-                            else {
-                                alert("Error");
-                            }
-                        }
-                    }
-                    alternateReq.send();
-                }
-                else{
-                    let response = JSON.parse(mainReq.responseText);
-                    document.getElementById("inputtext").value = response.message;
-                }
-            }
-        }
-        mainReq.send();
-    }
+        showRedirectDiv();
+        showCopyButton();
+        showShortUrl();
+      }
+    };
+    mainReq.open("POST", apiCall, true);
+    mainReq.send();
+  }
 }
 
-function inputRedirect(){
-    window.open(shortURL, '_blank');
-    
-    let redirectDiv = document.getElementById("redirectDiv");
-    redirectDiv.style.display = "none";
+function inputRedirect() {
+  window.open(shortURL, "_blank");
+
+  let redirectDiv = document.getElementById("redirectDiv");
+  redirectDiv.style.display = "none";
 }
-function showRedirectDiv(){
-    let redirectDiv = document.getElementById("redirectDiv");
-    redirectDiv.style.display = "block";
+function showRedirectDiv() {
+  let redirectDiv = document.getElementById("redirectDiv");
+  redirectDiv.style.display = "block";
 }
-function showCopyButton(){
-    let copyButton = document.getElementById("copybutton")
-    copyButton.style.display = "block";
+function showCopyButton() {
+  let copyButton = document.getElementById("copybutton");
+  copyButton.style.display = "block";
 }
 
 function isValidURL(string) {
-    let validMatch = string.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
-    return (validMatch !== null)
+  let validMatch = string.match(
+    /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g
+  );
+  return validMatch !== null;
 }
 
-function isNotAPIredirect(string){
-    let preventNestedRedirects = string.includes(URL_TO_API);
-    return preventNestedRedirects;
+function isNotAPIredirect(string) {
+  let preventNestedRedirects = string.includes(URL_TO_API);
+  return preventNestedRedirects;
 }
 
-function copyClear(){
-    let urlInputBar = document.getElementById('inputtext')
-    navigator.clipboard.writeText(shortURL);
-    urlInputBar.value = '';
+function copyClear() {
+  let urlInputBar = document.getElementById("inputtext");
+  navigator.clipboard.writeText(shortURL);
+  urlInputBar.value = "";
 
-    let copyButton = document.getElementById('copybutton')
-    copyButton.style.display = "none";
+  let copyButton = document.getElementById("copybutton");
+  copyButton.style.display = "none";
 
-    let redirectDiv = document.getElementById('redirectDiv')
-    redirectDiv.style.display = "none";
+  let redirectDiv = document.getElementById("redirectDiv");
+  redirectDiv.style.display = "none";
 
-    let inputURL = document.getElementById("inputtext");
-    inputURL.style.marginLeft= "0vh";
+  let inputURL = document.getElementById("inputtext");
+  inputURL.style.marginLeft = "0vh";
 }
 
-function showShortUrl(){
-    let eleUrl = document.getElementById("card");
-    eleUrl.style.display = "block";
+function showShortUrl() {
+  let eleUrl = document.getElementById("card");
+  eleUrl.style.display = "block";
 
-    let eleName = document.getElementById("headingcard");
-    eleName.style.display = "block";
+  let eleName = document.getElementById("headingcard");
+  eleName.style.display = "block";
 
-    let eleDate = document.getElementById("datecard");
-    eleDate.style.display = "block";
+  let eleDate = document.getElementById("datecard");
+  eleDate.style.display = "block";
 
-    var currentDate = new Date();
+  var currentDate = new Date();
 
-    eleName.innerHTML = 'Short URL';
-    eleUrl.innerHTML = shortURL;
-    eleDate.innerHTML = (currentDate.getMonth() + 1) + "/" + currentDate.getDate() + "/" + currentDate.getFullYear();
-    
+  eleName.innerHTML = "Short URL";
+  eleUrl.innerHTML = shortURL;
+  eleDate.innerHTML =
+    currentDate.getMonth() +
+    1 +
+    "/" +
+    currentDate.getDate() +
+    "/" +
+    currentDate.getFullYear();
 }
