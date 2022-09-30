@@ -1,3 +1,4 @@
+from ast import Del
 import sys
 import os
 
@@ -10,6 +11,7 @@ if __package__:
         sys.path.append(parentdir)
     from .url import URL
     from .users import Users
+    from .delStack import DelStack
 
 
 def insert_user(session, usertype: bool, authkey: str):
@@ -19,10 +21,10 @@ def insert_user(session, usertype: bool, authkey: str):
         session.add(user)
         session.commit()
         return user
-    elif x.auth_key != user.auth_key:
-        session.add(user)
-        session.commit()
-        return user
+    # elif x.auth_key != user.auth_key:
+    #     session.add(user)
+    #     session.commit()
+    #     return user
     else:
         return None
 
@@ -34,10 +36,10 @@ def insert_url(session, short_url: str, long_url: str, time: str):
         session.add(url)
         session.commit()
         return url
-    elif x.long_url != url.long_url:
-        session.add(url)
-        session.commit()
-        return url
+    # elif x.long_url != url.long_url:
+    #     session.add(url)
+    #     session.commit()
+    #     return url
     else:
         return None
 
@@ -62,10 +64,30 @@ def get_short_url(session, short_url: str):
     return x
 
 
-def drop_url(session, short_url: str):
-    x = get_short_url(session, short_url)
-    if x is not None:
-        session.delete(x)
+def drop_url(session, long_url: str):
+    droppedObject = find_short_url(session, long_url)
+    if droppedObject is not None:
+        session.delete(droppedObject)
         session.commit()
+        return droppedObject
     else:
         return None
+
+
+def popDelStack(session):
+    topElement = session.query(DelStack).first()
+    if topElement is not None:
+        session.delete(topElement)
+        session.commit()
+        return topElement
+    else:
+        return None
+
+
+def pushDelStack(session, shortUrl):
+
+    rowDelStack = DelStack(shortUrl)
+
+    session.add(rowDelStack)
+    session.commit()
+    return shortUrl

@@ -1,9 +1,10 @@
 from fastapi.testclient import TestClient
+from fastapi import Depends
 
 from sqlalchemy import create_engine, Column, String, Integer, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 
 from datetime import datetime
 
@@ -19,6 +20,7 @@ if parent_dir not in sys.path:
 if root_dir not in sys.path:
     sys.path.append(root_dir)
 from api.api import app, get_db
+from api.db.dbmng import popDelStack
 
 load_dotenv()
 
@@ -60,6 +62,18 @@ class Users(Base):
     def __init__(self, user_type, auth_key):
         self.user_type = user_type
         self.auth_key = auth_key
+
+
+class DelStack(Base):
+    __tablename__ = "delStack"
+    short_url = Column(String(256), unique=True, nullable=False)
+    id = Column(
+        Integer, primary_key=True, nullable=False, unique=True, autoincrement=True
+    )
+
+    def __init__(self, shortUrl, id):
+        self.short_url = shortUrl
+        self.id = id
 
 
 Base.metadata.create_all(bind=engine)
@@ -303,3 +317,132 @@ def test_delete():
     data = response.json()
     assert data["status"] == "404"
     assert data["message"] == "Not found"
+
+    db = Session()
+    tempRes = popDelStack(db)
+    assert tempRes.short_url == "0"
+    tempRes = popDelStack(db)
+    assert tempRes.short_url == "1"
+    tempRes = popDelStack(db)
+    assert tempRes.short_url == "2"
+    tempRes = popDelStack(db)
+    assert tempRes.short_url == "3"
+    tempRes = popDelStack(db)
+    assert tempRes.short_url == "4"
+    tempRes = popDelStack(db)
+    assert tempRes.short_url == "5"
+    tempRes = popDelStack(db)
+    assert tempRes.short_url == "6"
+    tempRes = popDelStack(db)
+    assert tempRes.short_url == "7"
+    tempRes = popDelStack(db)
+    assert tempRes.short_url == "8"
+    tempRes = popDelStack(db)
+    assert tempRes.short_url == "9"
+    tempRes = popDelStack(db)
+    assert tempRes.short_url == "a"
+    tempRes = popDelStack(db)
+    assert tempRes.short_url == "b"
+
+    tempRes = popDelStack(db)
+    assert tempRes is None
+
+
+def test_deleteAdd():
+    response = client.post("/add?long_url=https://google.com")
+    currtime = datetime.now().strftime("%Y-%m-%d")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["long_url"] == "https://google.com"
+    assert data["short_url"] == "0"
+    assert data["time"] == currtime
+
+    response = client.post("/add?long_url=www.google.com")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["long_url"] == "www.google.com"
+    assert data["short_url"] == "1"
+    assert data["time"] == currtime
+
+    response = client.post("/add?long_url=https://www.facebook.com")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["long_url"] == "https://www.facebook.com"
+    assert data["short_url"] == "2"
+    assert data["time"] == currtime
+
+    response = client.post("/add?long_url=https://stackoverflow.com")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["long_url"] == "https://stackoverflow.com"
+    assert data["short_url"] == "3"
+    assert data["time"] == currtime
+
+    response = client.delete("/delete?long_url=https://google.com")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["long_url"] == "https://google.com"
+    assert data["short_url"] == "0"
+    assert data["time"] == currtime
+
+    response = client.delete("/delete?long_url=www.google.com")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["long_url"] == "www.google.com"
+    assert data["short_url"] == "1"
+    assert data["time"] == currtime
+
+    response = client.post("/add?long_url=https://lifearafter.github.io/URL_Shortener")
+    currtime = datetime.now().strftime("%Y-%m-%d")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["long_url"] == "https://lifearafter.github.io/URL_Shortener"
+    assert data["short_url"] == "0"
+    assert data["time"] == currtime
+
+    response = client.post("/add?long_url=www.google.com")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["long_url"] == "www.google.com"
+    assert data["short_url"] == "1"
+    assert data["time"] == currtime
+
+    response = client.delete(
+        "/delete?long_url=https://lifearafter.github.io/URL_Shortener"
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["long_url"] == "https://lifearafter.github.io/URL_Shortener"
+    assert data["short_url"] == "0"
+    assert data["time"] == currtime
+
+    response = client.delete("/delete?long_url=www.google.com")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["long_url"] == "www.google.com"
+    assert data["short_url"] == "1"
+    assert data["time"] == currtime
+
+    response = client.delete("/delete?long_url=https://www.facebook.com")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["long_url"] == "https://www.facebook.com"
+    assert data["short_url"] == "2"
+    assert data["time"] == currtime
+
+    response = client.delete("/delete?long_url=https://stackoverflow.com")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["long_url"] == "https://stackoverflow.com"
+    assert data["short_url"] == "3"
+    assert data["time"] == currtime
+
+    db = Session()
+    tempRes = popDelStack(db)
+    assert tempRes.short_url == "0"
+    tempRes = popDelStack(db)
+    assert tempRes.short_url == "1"
+    tempRes = popDelStack(db)
+    assert tempRes.short_url == "2"
+    tempRes = popDelStack(db)
+    assert tempRes.short_url == "3"

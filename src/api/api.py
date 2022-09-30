@@ -1,4 +1,5 @@
 from string import ascii_letters, digits
+from xmlrpc.server import DocXMLRPCRequestHandler
 from mangum import Mangum
 
 from fastapi.middleware.cors import CORSMiddleware
@@ -228,16 +229,22 @@ async def add_url(
 
     if dbmodel != None:
         lastchar = dbmodel.short_url[-1]
-        shortUrlTuple = await shorten(lastchar)
-        if shortUrlTuple[1] == True:
-            shortUrl = dbmodel.short_url + shortUrlTuple[0]
+        delShortUrl = dbmng.popDelStack(db)
+
+        if delShortUrl is None:
+            shortUrlTuple = await shorten(lastchar)
+            if shortUrlTuple[1] == True:
+                shortUrl = dbmodel.short_url + shortUrlTuple[0]
+            else:
+                shortUrl = dbmodel.short_url
+                shortUrl = re.sub(
+                    r".$",
+                    "{shortUrlTuple}".format(shortUrlTuple=shortUrlTuple[0]),
+                    shortUrl,
+                )
         else:
-            shortUrl = dbmodel.short_url
-            shortUrl = re.sub(
-                r".$",
-                "{shortUrlTuple}".format(shortUrlTuple=shortUrlTuple[0]),
-                shortUrl,
-            )
+            shortUrl = delShortUrl.short_url
+
         model = URL(
             short_url=shortUrl,
             long_url=stripped,
@@ -281,19 +288,20 @@ async def delete(
     check_url = checkurl(long_url)
     if check_url:
         stripped = stripurl(long_url)
-        dbmodel = dbmng.find_short_url(db, stripped)
     else:
-        dbmodel = dbmng.find_short_url(db, long_url)
+        stripped = long_url
 
-    if dbmodel != None:
-        url = URL.from_orm(dbmodel)
-        dbmng.drop_url(db, dbmodel.short_url)
-        url.long_url = long_url
-        return url
-    else:
+    droppedObject = dbmng.drop_url(db, stripped)
+
+    if droppedObject is None:
         return JSONResponse(
             status_code=404, content={"status": "404", "message": "Not found"}
         )
+
+    dbmng.pushDelStack(db, droppedObject.short_url)
+
+    droppedObject.long_url = long_url
+    return droppedObject
 
 
 handler = Mangum(app=app)
