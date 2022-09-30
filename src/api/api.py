@@ -41,7 +41,7 @@ tags_metadata = [
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(openapi_tags=tags_metadata, root_path="/dev")
+app = FastAPI(openapi_tags=tags_metadata)
 
 
 origins = ["*"]
