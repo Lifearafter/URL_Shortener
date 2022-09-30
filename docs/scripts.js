@@ -1,4 +1,5 @@
-const URL_TO_API = "https://nxihka4eoi.execute-api.us-east-1.amazonaws.com/dev";
+const URL_TO_API = "https://api.shrter.xyz";
+const URL_TO_API_WITH_PROTOCAL = "api.shrter.xyz";
 var shortURL;
 
 let apiColdCall = URL_TO_API + "/url?long_url=" + "google.com";
@@ -37,7 +38,7 @@ function inputButtonClick() {
         let response = mainReq.responseText;
         let jsonOut = JSON.parse(response);
         let formattedOut = jsonOut.short_url;
-        shortURL = URL_TO_API + "/" + formattedOut;
+        shortURL = URL_TO_API_WITH_PROTOCAL + "/" + formattedOut;
 
         urlEle.value = shortURL;
         urlEle.style.marginLeft = "8.6vh";
